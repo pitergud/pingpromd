@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ping Pong Tournament</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Ping Pong Tournament</h1>
+  <h2>Submit Match</h2>
+  <form action="{{ url_for('submit_match') }}" method="POST">
+    <label for="player1">Player 1:</label>
+    <select name="player1" id="player1">
+      {% for player in players %}
+      <option value="{{ player.name }}">{{ player.name }}</option>
+      {% endfor %}
+    </select>
+    <label for="score1">Score:</label>
+    <input type="number" name="score1" required>
+    
+    <label for="player2">Player 2:</label>
+    <select name="player2" id="player2">
+      {% for player in players %}
+      <option value="{{ player.name }}">{{ player.name }}</option>
+      {% endfor %}
+    </select>
+    <label for="score2">Score:</label>
+    <input type="number" name="score2" required>
+    
+    <button type="submit">Submit</button>
+  </form>
+  
+  <h2>Current Rankings</h2>
+  <ul>
+    {% for player in players %}
+    <li>{{ player.name }}: {{ player.rating }}</li>
+    {% endfor %}
+  </ul>
+  
+  <a href="{{ url_for('history') }}">Match History</a>
+</body>
+</html>
