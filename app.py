@@ -1,32 +1,38 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-import json
+import firebase_admin
+from firebase_admin import credentials, firestore
 import os
 
 app = Flask(__name__)
 
-# File di dati
-PLAYERS_FILE = 'players.json'
-MATCHES_FILE = 'matches.json'
+# Inizializza l'app Firebase
+cred = credentials.Certificate("path/to/your/firebase_credentials.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
-# Carica i dati dei giocatori
+# Funzione per caricare i dati dei giocatori dal database
 def load_players():
-    with open(PLAYERS_FILE, 'r') as f:
-        return json.load(f)
+    players_ref = db.collection('players')
+    players = [player.to_dict() for player in players_ref.get()]
+    return players
 
-# Salva i dati dei giocatori
+# Funzione per salvare i dati dei giocatori nel database
 def save_players(players):
-    with open(PLAYERS_FILE, 'w') as f:
-        json.dump(players, f)
+    players_ref = db.collection('players')
+    for player in players:
+        players_ref.document(player['name']).set(player)
 
-# Carica le partite
+# Funzione per caricare le partite
 def load_matches():
-    with open(MATCHES_FILE, 'r') as f:
-        return json.load(f)
+    matches_ref = db.collection('matches')
+    matches = [match.to_dict() for match in matches_ref.get()]
+    return matches
 
-# Salva le partite
+# Funzione per salvare le partite
 def save_matches(matches):
-    with open(MATCHES_FILE, 'w') as f:
-        json.dump(matches, f)
+    matches_ref = db.collection('matches')
+    for match in matches:
+        matches_ref.add(match)
 
 # Funzione per calcolare il nuovo rating ELO
 def calculate_elo(player1, player2, score1, score2):
