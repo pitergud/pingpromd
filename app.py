@@ -6,7 +6,8 @@ import os
 app = Flask(__name__)
 
 # Inizializza l'app Firebase
-cred = credentials.Certificate("path/to/your/firebase_credentials.json")
+firebase_credentials = json.loads(os.getenv('GOOGLE_APPLICATION_CREDENTIALS'))
+cred = credentials.Certificate(firebase_credentials)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
